@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "shunshou"
+version = "0.1.0"
+description = "顺手 — 命令行效率工具箱：图片批处理、文件整理、Markdown 转图等"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+authors = [{name = "wangbeiebi"}]
+keywords = ["cli", "tools", "image", "productivity", "batch-processing"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "Pillow>=10.0",
+    "click>=8.0",
+    "markdown>=3.4",
+    "requests>=2.28",
+    "beautifulsoup4>=4.11",
+]
+
+[project.scripts]
+ss = "shunshou.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/wangbeiebi/shunshou"
+Repository = "https://github.com/wangbeiebi/shunshou"
+Issues = "https://github.com/wangbeiebi/shunshou/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
