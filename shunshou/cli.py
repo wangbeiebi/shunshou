@@ -9,15 +9,10 @@ from shunshou import __version__
 @click.group()
 @click.version_option(__version__, prog_name="shunshou")
 def main():
-    """🛠️ 顺手 — 命令行效率工具箱。
+    """ShunShou: CLI efficiency toolkit.
 
-    常用操作一键搞定：图片批处理、文件整理、Markdown 转图等。
-
-    \b
-    快速开始:
-      ss image --help     查看图片处理相关命令
-      ss organize --help  查看文件整理相关命令
-      ss md2img --help    查看 Markdown 转图命令
+    Batch image processing, file organization, Markdown to image,
+    clipboard utilities, link extraction, GIF tools, and more.
     """
     pass
 
@@ -25,7 +20,7 @@ def main():
 # ---- 图片模块 ----
 @main.group()
 def image():
-    """🖼️  批量图片处理"""
+    """Batch image processing"""
     pass
 
 
@@ -37,7 +32,7 @@ def image():
 @click.option("--quality", "-q", type=int, default=85, help="输出质量 (1-100)")
 @click.option("--output", "-o", type=click.Path(), help="输出目录")
 def resize(directory, width, height, output_format, quality, output):
-    """批量调整图片尺寸并转换格式"""
+    """Batch resize and convert image formats"""
     from shunshou.modules.image import batch_resize
     batch_resize(directory, width, height, output_format, quality, output)
 
@@ -50,7 +45,7 @@ def resize(directory, width, height, output_format, quality, output):
 @click.option("--font-size", type=int, default=36, help="字体大小")
 @click.option("--output", "-o", type=click.Path(), help="输出目录")
 def watermark(directory, text, position, opacity, font_size, output):
-    """给图片批量添加文字水印"""
+    """Batch add text watermark to images"""
     from shunshou.modules.image import batch_watermark
     batch_watermark(directory, text, position, opacity, font_size, output)
 
@@ -61,7 +56,7 @@ def watermark(directory, text, position, opacity, font_size, output):
 @click.option("--quality", "-q", type=int, default=85, help="输出质量 (1-100)")
 @click.option("--output", "-o", type=click.Path(), help="输出目录")
 def convert(directory, to_format, quality, output):
-    """批量转换图片格式"""
+    """Batch convert image formats"""
     from shunshou.modules.image import batch_convert
     batch_convert(directory, to_format, quality, output)
 
@@ -72,7 +67,7 @@ def convert(directory, to_format, quality, output):
 @click.option("--by", "-b", "sort_by", type=click.Choice(["type", "date"]), default="type", help="整理方式")
 @click.option("--dry-run", is_flag=True, help="预览模式，不实际移动文件")
 def organize(directory, sort_by, dry_run):
-    """📁 自动整理文件夹 (按类型/日期归类)"""
+    """Organize files by type or date"""
     from shunshou.modules.organize import organize_files
     organize_files(directory, sort_by, dry_run)
 
@@ -84,7 +79,7 @@ def organize(directory, sort_by, dry_run):
 @click.option("--width", "-w", type=int, default=800, help="图片宽度")
 @click.option("--theme", type=click.Choice(["light", "dark"]), default="light", help="主题")
 def md2img(markdown_file, output, width, theme):
-    """📝 将 Markdown 文件渲染为图片"""
+    """Render Markdown file to image"""
     from shunshou.modules.md2img import md_to_image
     md_to_image(markdown_file, output, width, theme)
 
@@ -92,22 +87,179 @@ def md2img(markdown_file, output, width, theme):
 # ---- 剪贴板模块 ----
 @main.group()
 def clip():
-    """📋 剪贴板操作"""
+    """Clipboard operations"""
     pass
 
 
 @clip.command()
 def dedup():
-    """剪贴板文本去重 (按行)"""
+    """Deduplicate clipboard text by line"""
     from shunshou.modules.clipboard import clipboard_dedup
     clipboard_dedup()
 
 
 @clip.command()
 def stats():
-    """剪贴板文本统计"""
+    """Show clipboard text statistics"""
     from shunshou.modules.clipboard import clipboard_stats
     clipboard_stats()
+
+
+# ---- GIF 处理模块 ----
+@main.group()
+def gif():
+    """GIF processing: split, make, optimize, emoji text"""
+    pass
+
+
+@gif.command()
+@click.argument("gif_file", type=click.Path(exists=True))
+@click.option("--output", "-o", type=click.Path(), help="输出目录")
+@click.option("--format", "-f", "fmt", type=click.Choice(["png", "jpg"]), default="png", help="输出帧格式")
+def split(gif_file, output, fmt):
+    """Split GIF into individual frames"""
+    from shunshou.modules.gif import split_gif
+    split_gif(gif_file, output, fmt)
+
+
+@gif.command()
+@click.argument("images_dir", type=click.Path(exists=True))
+@click.option("--output", "-o", type=click.Path(), required=True, help="输出 GIF 路径")
+@click.option("--duration", "-d", type=int, default=200, help="每帧间隔 (毫秒)")
+@click.option("--loop", "-l", type=int, default=0, help="循环次数 (0=无限)")
+@click.option("--optimize/--no-optimize", default=True, help="是否压缩优化")
+def make(images_dir, output, duration, loop, optimize):
+    """Create animated GIF from multiple images"""
+    from shunshou.modules.gif import make_gif
+    make_gif(images_dir, output, duration, loop, optimize)
+
+
+@gif.command()
+@click.argument("gif_file", type=click.Path(exists=True))
+@click.option("--output", "-o", type=click.Path(), help="输出路径")
+@click.option("--colors", "-c", type=int, default=128, help="最大颜色数 (2-256)")
+@click.option("--scale", "-s", type=float, default=1.0, help="缩放比例 (0.1-1.0)")
+def optimize(gif_file, output, colors, scale):
+    """Optimize GIF file size"""
+    from shunshou.modules.gif import optimize_gif
+    optimize_gif(gif_file, output, colors, scale)
+
+
+@gif.command()
+@click.argument("gif_file", type=click.Path(exists=True))
+def info(gif_file):
+    """Show GIF file info"""
+    from shunshou.modules.gif import gif_info
+    gif_info(gif_file)
+
+
+@gif.command()
+@click.argument("text")
+@click.option("--output", "-o", type=click.Path(), default="emoji.png", help="输出图片路径")
+@click.option("--size", "-s", "font_size", type=int, default=80, help="字体大小")
+@click.option("--bg", "bg_color", default="#FF6600", help="背景色 (#RRGGBB)")
+@click.option("--fg", "text_color", default="#FFFFFF", help="文字色 (#RRGGBB)")
+def emoji(text, output, font_size, bg_color, text_color):
+    """Generate text emoji image"""
+    from shunshou.modules.gif import emoji_text
+    emoji_text(text, output, font_size, bg_color, text_color)
+
+
+# ---- 图片美化模块 ----
+@main.group()
+def style():
+    """Image styling: rounded corners, shadows, borders, stitching"""
+    pass
+
+
+@style.command()
+@click.argument("directory", type=click.Path(exists=True))
+@click.option("--radius", "-r", type=int, default=30, help="圆角半径 (像素)")
+@click.option("--output", "-o", type=click.Path(), help="输出目录")
+def round(directory, radius, output):
+    """Add rounded corners to images"""
+    from shunshou.modules.style import round_corners
+    round_corners(directory, radius, output)
+
+
+@style.command()
+@click.argument("directory", type=click.Path(exists=True))
+@click.option("--offset", type=int, default=10, help="阴影偏移 (像素)")
+@click.option("--blur", type=int, default=15, help="模糊半径 (像素)")
+@click.option("--opacity", type=int, default=80, help="阴影不透明度 (0-255)")
+@click.option("--output", "-o", type=click.Path(), help="输出目录")
+def shadow(directory, offset, blur, opacity, output):
+    """Add drop shadow to images"""
+    from shunshou.modules.style import add_shadow
+    add_shadow(directory, offset, blur, opacity, output)
+
+
+@style.command()
+@click.argument("directory", type=click.Path(exists=True))
+@click.option("--width", "-w", type=int, default=10, help="边框宽度 (像素)")
+@click.option("--color", "-c", default="#000000", help="边框颜色 (#RRGGBB)")
+@click.option("--output", "-o", type=click.Path(), help="输出目录")
+def border(directory, width, color, output):
+    """Add border to images"""
+    from shunshou.modules.style import add_border
+    add_border(directory, width, color, output)
+
+
+@style.command()
+@click.argument("directory", type=click.Path(exists=True))
+@click.option("--output", "-o", type=click.Path(), required=True, help="输出图片路径")
+@click.option("--direction", "-d", type=click.Choice(["horizontal", "vertical"]), default="horizontal", help="拼接方向")
+@click.option("--gap", "-g", type=int, default=0, help="图片间距 (像素)")
+@click.option("--bg", "bg_color", default="#FFFFFF", help="背景色 (#RRGGBB)")
+@click.option("--align", type=click.Choice(["top", "center", "bottom"]), default="center", help="对齐方式")
+def stitch(directory, output, direction, gap, bg_color, align):
+    """Stitch images horizontally or vertically"""
+    from shunshou.modules.style import stitch as do_stitch
+    do_stitch(directory, output, direction, gap, bg_color, align)
+
+
+@style.command()
+@click.argument("directory", type=click.Path(exists=True))
+@click.option("--output", "-o", type=click.Path(), required=True, help="输出图片路径")
+@click.option("--columns", "-c", type=int, default=3, help="每行列数")
+@click.option("--gap", "-g", type=int, default=10, help="间距 (像素)")
+@click.option("--bg", "bg_color", default="#FFFFFF", help="背景色 (#RRGGBB)")
+@click.option("--size", "cell_size", default=None, help="统一尺寸 (WxH, 如 400x400)")
+def grid(directory, output, columns, gap, bg_color, cell_size):
+    """Arrange images in a grid layout"""
+    from shunshou.modules.style import grid as do_grid
+    do_grid(directory, output, columns, gap, bg_color, cell_size)
+
+
+# ---- 剪贴板增强命令 ----
+@clip.command()
+@click.option("--indent", "-i", type=int, default=2, help="缩进空格数")
+@click.option("--sort/--no-sort", default=False, help="是否按 key 排序")
+def jsonfmt(indent, sort):
+    """Format JSON in clipboard"""
+    from shunshou.modules.clipfmt import json_fmt
+    json_fmt(indent, sort)
+
+
+@clip.command()
+def jsonminify():
+    """Minify JSON in clipboard"""
+    from shunshou.modules.clipfmt import json_minify
+    json_minify()
+
+
+@clip.command()
+def b64enc():
+    """Encode clipboard text to Base64"""
+    from shunshou.modules.clipfmt import b64encode
+    b64encode()
+
+
+@clip.command()
+def b64dec():
+    """Decode clipboard Base64 to text"""
+    from shunshou.modules.clipfmt import b64decode
+    b64decode()
 
 
 # ---- 链接提取模块 ----
@@ -115,6 +267,6 @@ def stats():
 @click.argument("source")
 @click.option("--output", "-o", type=click.Path(), help="输出文件")
 def links(source, output):
-    """🔗 从文本或 URL 中提取所有链接"""
+    """Extract all links from text or URL"""
     from shunshou.modules.links import extract_links
     extract_links(source, output)
