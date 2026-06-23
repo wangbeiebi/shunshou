@@ -1,0 +1,6 @@
+﻿v0.2.0 - 10 modules, 28+ commands
+
+New: qr.py (QR code generator), rename.py (batch regex rename + auto-numbering)
+Full modules: image, gif, style, organize, md2img, clip, clipfmt, qr, rename, links
+
+Install: pip install https://github.com/wangbeiebi/shunshou/releases/download/v0.2.0/shunshou-0.1.0-py3-none-any.whl

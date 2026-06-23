@@ -2,7 +2,7 @@
   <img src="https://img.shields.io/badge/ShunShou-CLI%20Toolbox-orange?style=for-the-badge" alt="ShunShou">
 </p>
 
-<h1 align="center">ShunShou (ShunShou)</h1>
+<h1 align="center">ShunShou</h1>
 
 <p align="center">
   <b>A CLI efficiency toolkit. Do more with less.</b>
@@ -17,7 +17,13 @@
 
 ---
 
-## Features (8 modules, 13+ commands)
+## Install
+
+```bash
+pip install https://github.com/wangbeiebi/shunshou/releases/latest/download/shunshou-0.1.0-py3-none-any.whl
+```
+
+## Features (10 modules, 28+ commands)
 
 | Module | Command | Description |
 |--------|---------|-------------|
@@ -27,20 +33,16 @@
 | Organize | `ss organize` | Auto-organize files by type or date |
 | Markdown | `ss md2img` | Render Markdown to image (light/dark theme) |
 | Clipboard | `ss clip` | Dedup, stats, JSON format/minify, Base64 |
+| QR Code | `ss qr` | Generate QR codes from text or URLs |
+| Rename | `ss rename` | Batch rename with regex or auto-numbering |
 | Links | `ss links` | Extract links from text, file, or URL |
 
 ---
 
-## Quick Start
+## Quick Examples
 
 ```bash
-pip install shunshou
-```
-
-### Examples
-
-```bash
-# Image batch processing
+# Image handling
 ss image resize ./photos --width 800 --format webp --quality 80
 ss image watermark ./photos --text "(c)2024" --position bottom-right
 
@@ -55,19 +57,19 @@ ss style shadow ./images --blur 15 --opacity 80
 ss style stitch ./photos -o banner.png --direction horizontal --gap 10
 ss style grid ./photos -o gallery.png --columns 3
 
-# File organization
+# File management
 ss organize ~/Downloads --by type
-ss organize ~/Desktop --by date --dry-run
+ss rename batch ./photos -p "IMG_" -r "photo_" --dry-run
+ss rename number ./photos --format "{:03d}" --start 1
 
-# Markdown to image
+# Clipboard tools
+ss clip dedup          # remove duplicate lines
+ss clip jsonfmt -i 2   # format JSON in clipboard
+ss clip b64enc         # encode to Base64
+
+# Utilities
+ss qr "https://github.com/wangbeiebi/shunshou" -o qr.png
 ss md2img README.md -o output.png --theme dark
-
-# Clipboard utilities
-ss clip dedup     # remove duplicate lines
-ss clip jsonfmt   # format JSON in clipboard
-ss clip b64enc    # encode to Base64
-
-# Link extraction
 ss links https://example.com
 ```
 
@@ -75,20 +77,8 @@ ss links https://example.com
 
 ## Requirements
 
-- Python 3.9+
-- Pillow, Click, BeautifulSoup4, Markdown, Requests
+Python 3.9+ with Pillow, Click, BeautifulSoup4, Markdown, Requests, qrcode
 
 ---
 
-## Roadmap
-
-- [ ] Add rounded corners + shadow to batch image pipeline
-- [ ] GIF optimization with quality/size tuning
-- [ ] Markdown table rendering
-- [ ] Image grid / sprite sheet generator
-- [ ] Clipboard JSON formatting
-- [ ] GitHub contribution chart CLI version
-
----
-
-Open source under [MIT](LICENSE). Star, fork, PR welcome!
+MIT License. Star, fork, PR welcome!

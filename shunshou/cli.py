@@ -262,6 +262,53 @@ def b64dec():
     b64decode()
 
 
+# ---- 二维码模块 ----
+@main.command()
+@click.argument("data")
+@click.option("--output", "-o", type=click.Path(), default="qr.png", help="输出图片路径")
+@click.option("--size", "-s", type=int, default=300, help="图片尺寸 (像素)")
+@click.option("--color", "-c", default="#000000", help="前景色")
+@click.option("--bg", default="#FFFFFF", help="背景色")
+def qr(data, output, size, color, bg):
+    """Generate QR code from text or URL"""
+    from shunshou.modules.qr import generate_qr
+    generate_qr(data, output, size, color, bg)
+
+
+# ---- 批量重命名模块 ----
+@main.group()
+def rename():
+    """Batch file rename with pattern matching"""
+    pass
+
+
+@rename.command()
+@click.argument("directory", type=click.Path(exists=True))
+@click.option("--pattern", "-p", help="正则匹配模式")
+@click.option("--replace", "-r", default="", help="替换内容")
+@click.option("--prefix", help="添加前缀")
+@click.option("--suffix", help="添加后缀")
+@click.option("--dry-run/--go", default=True, help="预览模式 vs 实际执行")
+@click.option("--recursive/--no-recursive", default=False, help="是否递归子目录")
+def batch(directory, pattern, replace, prefix, suffix, dry_run, recursive):
+    """Batch rename files with regex"""
+    from shunshou.modules.rename import batch_rename
+    batch_rename(directory, pattern, replace, prefix, suffix, dry_run, recursive)
+
+
+@rename.command()
+@click.argument("directory", type=click.Path(exists=True))
+@click.option("--format", "-f", "fmt", default="{:03d}", help="编号格式 (Python format)")
+@click.option("--start", "-s", type=int, default=1, help="起始编号")
+@click.option("--step", type=int, default=1, help="编号步长")
+@click.option("--dry-run/--go", default=True, help="预览模式 vs 实际执行")
+@click.option("--sort", "sort_by", type=click.Choice(["name", "date"]), default="name", help="排序方式")
+def number(directory, fmt, start, step, dry_run, sort_by):
+    """Auto-number files sequentially"""
+    from shunshou.modules.rename import auto_number
+    auto_number(directory, fmt, start, step, dry_run, sort_by)
+
+
 # ---- 链接提取模块 ----
 @main.command()
 @click.argument("source")
